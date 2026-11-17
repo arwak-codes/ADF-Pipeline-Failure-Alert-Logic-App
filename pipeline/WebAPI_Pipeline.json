@@ -16,7 +16,7 @@
                 "userProperties": [],
                 "typeProperties": {
                     "method": "GET",
-                    "url": "<github_url>"
+                    "url": "https://raw.githubusercontent.com/arwak-codes/ADF-Pipeline-Failure-Alert-Logic-App/refs/heads/main/sample-data/DimAirport.json"
                 }
             },
             {
