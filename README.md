@@ -1,6 +1,6 @@
 # ADF Failure Alerts with Azure Logic Apps and Outlook
 
-An Azure Data Factory (ADF) pipeline that **sends me an email when a pipeline run fails**. The parent pipeline runs a child pipeline (which copies a CSV file from GitHub into the data lake). If the child fails or is skipped, a **Web activity** calls an **Azure Logic App**, and the Logic App sends an alert email through Outlook.
+An Azure Data Factory (ADF) pipeline that **sends me an email when a pipeline run fails**. The parent pipeline runs a child pipeline (which copies a DimAirport.json file from GitHub into the data lake). If the child fails or is skipped, a **Web activity** calls an **Azure Logic App**, and the Logic App sends an alert email through Outlook.
 
 ![Failed pipeline run with the alert sent](images/pipeline-failure-run.png)
 
@@ -13,7 +13,7 @@ Execute_WebAPI_Pipeline ──(on Failed or Skipped)──► FailureAlert (Web 
                                             Logic App: HTTP trigger → Send an email (V2)
 ```
 
-1. `Execute_WebAPI_Pipeline` runs the child pipeline `WebAPI_Pipeline` and waits for it to finish. The child copies a `.csv` file from GitHub to the `bronze` container.
+1. `Execute_WebAPI_Pipeline` runs the child pipeline `WebAPI_Pipeline` and waits for it to finish. The child copies a `.DimAirport.json` file from GitHub to the `bronze` container.
 2. If the child **fails** or is **skipped**, `FailureAlert` runs.
 3. `FailureAlert` sends an HTTP POST with details about the run to the Logic App's HTTP trigger.
 4. The Logic App sends an email to my Outlook inbox.
@@ -54,7 +54,7 @@ In this run, the child's `WebAPICall` step got a `404 Not Found` from the source
 | Component | Details |
 |---|---|
 | Parent pipeline | `Parent_Pipeline` |
-| Child pipeline | `WebAPI_Pipeline` (copies a CSV from GitHub to the `bronze` container) |
+| Child pipeline | `WebAPI_Pipeline` (copies a DimAirport.json from GitHub to the `bronze` container) |
 | Alert activity | `FailureAlert` (Web activity, POST), runs on **Failed** and **Skipped** |
 | Logic App | Consumption plan, Stateful workflow |
 | Logic App steps | HTTP trigger → Send an email (V2) using the Outlook.com connector |
@@ -77,6 +77,8 @@ pipeline/
 ├── Parent_Pipeline.json      (Logic App URL replaced with a placeholder)
 └── WebAPI_Pipeline.json
 images/
+sample-data/
+└── DimAirport.json
 ```
 
 Pipeline JSON was exported from ADF Studio using the **{ }** code view.
