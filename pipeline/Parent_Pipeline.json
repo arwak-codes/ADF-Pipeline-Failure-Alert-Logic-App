@@ -1,0 +1,58 @@
+{
+    "name": "Parent_Pipeline",
+    "properties": {
+        "activities": [
+            {
+                "name": "Execute_WebAPI_Pipeline",
+                "type": "ExecutePipeline",
+                "dependsOn": [],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "WebAPI_Pipeline",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                }
+            },
+            {
+                "name": "FailureAlert",
+                "type": "WebActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Execute_WebAPI_Pipeline",
+                        "dependencyConditions": [
+                            "Failed",
+                            "Skipped"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "method": "POST",
+                    "url": {
+                        "value": "<YOUR_LOGIC_APP_HTTP_TRIGGER_URL>",
+                        "type": "Expression"
+                    },
+                    "body": {
+                        "value": "{\n  \"pipeline_name\": \"@{pipeline().Pipeline}\",\n  \"run_id\": \"@{pipeline().RunId}\",\n  \"status\": \"@{activity('Execute_WebAPI_Pipeline').Status}\",\n  \"error\": \"@{if(equals(activity('Execute_WebAPI_Pipeline').Status, 'Failed'), string(activity('Execute_WebAPI_Pipeline').Error.Message), 'No Error')}\"\n}",
+                        "type": "Expression"
+                    }
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2026-11-16T10:28:13Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
